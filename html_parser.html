@@ -59,7 +59,6 @@
           const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
           pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight); // Add image to PDF
           pdf.save("document.pdf"); // Save PDF
-
         });
     });
   </script>

@@ -1,96 +1,284 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barcode Generator</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <style>
-        body {
-            background-color: #f4f6f9;
-        }
-        .custom-card {
-            box-shadow: 0 0 1px rgba(0,0,0,.125),0 1px 3px rgba(0,0,0,.2);
-            margin-bottom: 1rem;
-            border-radius: 0;
-        }
-        .custom-card .card-title {
-            font-weight: 700;
-            text-align: center;
-        }
-        .custom-card .card-body {
-            padding: 1.25rem;
-        }
-        .custom-card .btn {
-            font-weight: 700;
-        }
-        .form-label {
-            font-weight: 700;
-            margin-bottom: .5rem;
-        }
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        .form-group:last-child,
-        .form-group:last-of-type {
-            margin-bottom: 0 !important;
-        }
-        .form-control {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-        }
-        .form-control:focus {
-            background-color: #f8f9fa;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barcode Generator</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <style>
+    body {
+      background-color: #f4f6f9;
+    }
+
+    .custom-card {
+      box-shadow: 0 0 1px rgba(0, 0, 0, .125), 0 1px 3px rgba(0, 0, 0, .2);
+      margin-bottom: 1rem;
+      border-radius: 0;
+    }
+
+    .custom-card .card-title {
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .custom-card .card-body {
+      padding: 1.25rem;
+    }
+
+    .custom-card .btn {
+      font-weight: 700;
+    }
+
+    .form-label {
+      font-weight: 700;
+      margin-bottom: .5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group:last-child,
+    .form-group:last-of-type {
+      margin-bottom: 0 !important;
+    }
+
+    .form-control {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .form-control:focus {
+      background-color: #f8f9fa;
+    }
+
+    .form-select {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container my-4">
-        <div class="row">
-            <div class="col-sm-6">
-                <div class="card custom-card">
-                    <div class="card-body">
-                        <div class="card-title">DATOS PARA GENERAR CODIGO DE BARRAS</div>
+  
+  <!--<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>-->
 
-                        <form action="#">                        
-                            <div class="form-group">
-                                <label class="form-label" for="code">Código</label>
-                                <input class="form-control" type="text" id="code" name="code">
-                            </div>
+  <div class="container my-4" id="app">
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="card custom-card">
+          <div class="card-body">
+            <div class="card-title">DATOS PARA GENERAR CODIGO DE BARRAS</div>
 
-                            <div class="form-group">
-                                <label class="form-label" for="pageWidth">Ancho</label>
-                                <input class="form-control" type="text" id="pageWidth" name="pageWidth">
-                            </div>
+            <form @submit.prevent="generateBarcode">            
+              <div class="form-group">
+                <label class="form-label" for="pageWidth">Ancho (mm)</label>
+                <input class="form-control" type="text" v-model="pageWidth">
+              </div>
 
-                            <div class="form-group">
-                                <label class="form-label" for="pageHeight">Altura</label>
-                                <input class="form-control" type="text" id="pageHeight" name="pageHeight">
-                            </div>
+              <div class="form-group">
+                <label class="form-label" for="pageHeight">Altura (mm)</label>
+                <input class="form-control" type="text" v-model="pageHeight">
+              </div>
 
-                            <div class="form-group">
-                                <label class="form-label" for="formatType">Tipo Formato</label>
-                                <select class="form-control" name="formatType" id="formatType">
-                                    <option value="">Seleccione...</option>
-                                </select>
-                            </div>
+              <div class="form-group">
+                <label class="form-label" for="formatType">Tipo Formato</label>
+                <select class="form-select" v-model="formatType">
+                  <option value="">Seleccione...</option>
+                  <option value="ean13">EAN-13</option>
+                  <option value="ean8">EAN-8</option>
+                  <option value="ean5">EAN-5</option>
+                  <option value="ean2">EAN-2</option>
+                  <option value="code128">CODE128</option>
+                  <option value="upc-a">UPC</option>
+                </select>
+              </div>
 
-                            <br/>
+              <div class="form-group">
+                <label class="form-label" for="code">Código</label>
+                <input class="form-control" type="text" v-model="code">
+              </div>
 
-                            <button class="btn btn-primary w-100">GENERAR</button>
-                        </form>
-                    </div>
-                </div>                
-            </div>
-            <div class="col-sm-6">
-                <div class="card custom-card">
-                    <div class="card-body">
-                        <div class="card-title">VISTA PREVIA - FORMATO JSON</div>
-                        <div class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum dolores libero, magnam eius iure quod tempore earum alias expedita inventore aut voluptas consectetur, nostrum aperiam minima consequatur repellat id vero!</div>
-                    </div>
-                </div> 
-            </div>
+              <div class="form-group">
+                <label class="form-label" for="code">Cantidad</label>
+                <input class="form-control" type="text" v-model="quantity">
+              </div>
+
+              <br />
+
+              <button class="btn btn-primary w-100">GENERAR</button>
+            </form>
+          </div>
         </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="card custom-card">
+          <div class="card-body">
+            <div class="card-title">VISTA PREVIA - CODIGO DE BARRAS</div>
+            <div class="card-text">
+              <!--<svg id="barcode"></svg>-->
+            </div>
+          </div>
+        </div>
+        
+        <div class="card custom-card">
+          <div class="card-body">
+            <div class="card-title">VISTA PREVIA - FORMATO JSON</div>
+            <div class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum dolores libero, magnam
+              eius iure quod tempore earum alias expedita inventore aut voluptas consectetur, nostrum aperiam minima
+              consequatur repellat id vero!</div>
+          </div>
+        </div>
+      </div>
     </div>
+    
+    <br/>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <button class="btn btn-primary" @click="generateAll">GENERAR BARCODE</button>
+      </div>      
+
+      <br>
+
+      <div class="col-sm-12">
+        <div id="barcodeList-container">
+          <template v-for="item in barcodeList">
+            <div :style="{ 'width': pageWidth + 'mm', 'height': pageHeight + 'mm' }">
+              <svg 
+                class="barcode"
+                :jsbarcode-format="item.formatType"
+                :jsbarcode-value="item.code"
+                jsbarcode-textmargin="0"
+                jsbarcode-fontoptions="bold"
+              ></svg>
+            </div>            
+          </template>
+        </div>
+      </div> 
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+  <script type="module">
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {          
+          pageWidth: '57',
+          pageHeight: '40',
+          formatType: 'ean13',
+          code: '',
+          quantity: 1,
+          barcodeList: [
+            {
+                "code": "1234567890128", 
+                "formatType": "ean13",
+                "quantity": 10
+            },
+            {
+                "code": "12345670", 
+                "formatType": "ean8",
+                "quantity": 10
+            },
+            {
+                "code": "12345", 
+                "formatType": "ean5",
+                "quantity": 10
+            },
+            {
+                "code": "12", 
+                "formatType": "ean2",
+                "quantity": 10
+            },
+            {
+                "code": "123456789012", 
+                "formatType": "upc",
+                "quantity": 10
+            }
+          ]
+        }
+      }, 
+      methods: {
+        generateBarcode() {
+          let isOk = true;
+          if (!this.pageWidth) {
+            alert('Seleccione un ancho');
+            isOk = false;
+          }
+          else if (!this.pageHeight) {
+            alert('Seleccione una altura');
+            isOk = false;
+          }
+          else if (!this.formatType) {
+            alert('Seleccione un tipo de formato');
+            isOk = false;
+          }
+          else if (!this.code) {
+            alert('Seleccione un código');
+            isOk = false;
+          }
+
+          console.log('formatType: ', this.formatType);
+
+          if (isOk) {
+            JsBarcode("#barcode", this.code, {
+              format: this.formatType,
+              lineColor: "#000000",
+              width: 4,
+              height: 40,
+              margin: 10,
+              displayValue: false,
+              background: '#FFFFFF'
+            });
+            /*JsBarcode("#barcode", this.code, {
+              format: 'EAN-13',
+              lineColor: "black",
+              width: 3.5,
+              margin: 10,
+              height: 40,
+              displayValue: true,
+              background: '#ffffff'
+            });*/
+          }          
+        }, 
+        generateAll() {
+          barcode_array.map(item => {
+            console.log(item);
+
+            const divElm = document.createElement('div');
+            const svgElm = document.createElement('svg');
+
+            /*JsBarcode(cnt, item.code, {
+              format: item.formatType,
+              lineColor: "#000000",
+              width: 4,
+              height: 40,
+              margin: 10,
+              displayValue: false,
+              background: '#FFFFFF'
+            });*/
+
+            JsBarcode(svgElm, item.code, {
+              format: item.formatType,
+              lineColor: "#0aa",
+              width: 4,
+              height: 40,
+              displayValue: false
+            });
+
+            divElm.append(svgElm);
+            document.getElementById('barcodeList').append(divElm);
+
+          });
+        }
+      }, 
+      mounted() {
+        JsBarcode(".barcode").init();
+      }
+    }).mount('#app')
+  </script>
 </body>
 </html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <div id="app">
+        {{ message }}
+        <br>
+
+        <input type="text" v-model="sheet_width" id="sheet_width" placeholder="ancho">
+        <input type="text" v-model="sheet_height" id="sheet_height" placeholder="alto">
+
+
+        <select aria-placeholder="Select" v-model="selected">
+            <option value="EAN-13">EAN-13</option>
+            <option value="EAN-8">EAN-8</option>
+            <option value="EAN-5">EAN-5</option>
+            <option value="EAN-2">EAN-2</option>
+            <option value="CODE128">CODE128</option>
+            <option value="UPC">UPC</option>
+        </select>
+        <div>Selected: {{ selected }}</div>
+         <input type="number" v-model="number_pages" id="number" placeholder="Numero de codigos a generar">
+        <input type="number" v-model="number_pages" id="number" placeholder="Numero de codigos a generar">
+
+        <br>
+        <button @click="generate">Generar codigo de barras</button>
+
+        <div class="container mt-5">
+            <div class="row">
+                <div v-if="number_pages > 0">
+                    <div v-for="i in number_pages" :key="i">
+                        <div class="p-2" style="position: relative;">
+                            <svg 
+                                v-bind:style="{ width: ''+sheet_width+'mm', height: ''+sheet_height+'mm' }"
+                                id="barcode" class="p-0">
+                                
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <script>
+        const { createApp } = Vue
+
+        createApp({
+            data() {
+                return {
+                    message: 'App Generator',
+                    code: '',
+                    tipos: [],
+                    sheet_width: '',
+                    sheet_height: '',
+                    selected: '',
+                    number_pages: 0
+                }
+            },
+            methods: {
+                generate() {
+                    JsBarcode("#barcode", 123456789012, {
+                        format: 'upc',
+                        lineColor: "black",
+                        width: 3.5,
+                        margin:10,
+                        height: 40,
+                        displayValue: true,
+                        background: '#ffffff'
+                    });
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+
+</html>

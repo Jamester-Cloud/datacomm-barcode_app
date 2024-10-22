@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barcode Generator</title>
+</head>
+<body>
+  <div id="barcodeList-container"></div>
+
+  <br><br><br>
+  Lorem ipsum dolor, sit amet consectetur adipisicing elit. Asperiores exercitationem, odio explicabo assumenda rerum porro iure voluptas aliquam ab non doloremque delectus, ex nesciunt ullam, natus dolor quia? Architecto, iste!
+  <br>
+  <br>
+  <br>
+
+  <img src="" alt="Sin Imagen" id="snapshot">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+  <script src="https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="list.js"></script>
+  <script>
+    console.log(barcodeList)
+
+    const barcodeArray = [
+      {
+        "code": "1234567890128",
+        "formatType": "ean13",
+        "quantity": 10
+      },
+      {
+        "code": "12345670",
+        "formatType": "ean8",
+        "quantity": 10
+      },
+      {
+        "code": "12345",
+        "formatType": "ean5",
+        "quantity": 10
+      },
+      {
+        "code": "12",
+        "formatType": "ean2",
+        "quantity": 10
+      },
+      {
+        "code": "123456789012",
+        "formatType": "upc",
+        "quantity": 10
+      }
+    ];
+
+    for (let i = 0; i < barcodeArray.length; i++)
+    {
+      console.log('qty: ', parseInt(barcodeArray[i]["quantity"]))
+      for (let j = 0; j < parseInt(barcodeArray[i]["quantity"]); j++) 
+      {
+        document.getElementById('barcodeList-container').innerHTML += `
+          <div style="width:57mm, height:40mm; page-break-after:always;">
+            <svg 
+              class="barcode"
+              jsbarcode-format="${barcodeArray[i].formatType}"
+              jsbarcode-value="${barcodeArray[i].code}"
+              jsbarcode-textmargin="0"
+              jsbarcode-fontoptions="bold"
+            ></svg>
+          </div> 
+        `;
+      }
+    }
+    // <div style="page-break-after:always;"></div>
+
+    JsBarcode(".barcode").init();
+
+    let htmlElm = document.getElementById('barcodeList-container');
+    var worker = html2pdf().from(htmlElm).save();
+
+    /*html2canvas(htmlElm)
+      .then((canvas) => { 
+        console.log(canvas);
+
+        // CREATE IMG BASED IN HTML
+        const imgData = canvas.toDataURL('image/png');
+        // console.log(imgData);
+
+        document.getElementById('snapshot').src = imgData; // ONLY TO SHOW IMAGE CONTENT
+
+        // THEN, PARSE IMAGE TO PDF
+        const pdf       = window.jspdf.jsPDF(); // Initialize jsPDF
+
+        console.log('page size: ', pdf.internal.pageSize.height);
+
+        const imgProps  = pdf.getImageProperties(imgData);
+        const pdfWidth  = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight); // Add image to PDF
+        pdf.save("document.pdf"); // Save PDF
+      });*/
+  </script>
+</body>
+</html>
